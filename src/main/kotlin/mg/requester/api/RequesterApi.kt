@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 
 
 @RestController
-@RequestMapping("/search-offers")
 class RequesterApi {
 
     @PostMapping("/auth/token")
@@ -25,7 +24,28 @@ class RequesterApi {
         return ResponseEntity.ok(tokenResponse)
     }
 
-    @GetMapping(produces = ["application/json"])
+    @GetMapping("/search-offers",produces = ["application/vnd.allegro.partner.v1+json"])
+    fun searchOffers(
+        @RequestParam(required = true)
+        query: String,
+        @RequestParam(required = false)
+        prompt: String?,
+        @RequestParam(required = false, defaultValue = "10")
+        limit: Int,
+        @RequestParam(required = false)
+        uid: String?,
+        @RequestParam(required = false)
+        sessionId: String?,
+        @RequestParam("marketplace", defaultValue = "allegro-pl") marketplace: String,
+        @RequestParam("shippingCountry", defaultValue = "PL") shippingCountry: String,
+        locale: Locale,
+        @RequestHeader("Authorization", required = true) authorizationString: String
+    ): ResponseEntity<String> {
+        logger.info("authorizationString: $authorizationString")
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/vnd.allegro.partner.v1+json")).body(searchResponse)
+    }
+
+    @GetMapping("/search-offers-internal", produces = ["application/json"])
     fun searchOffers(
         @RequestParam(required = true)
         query: String,
